@@ -1,0 +1,25 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Hilbert/Hilbert.VC.VC.opendb
+/Hilbert/Hilbert.VC.db
+/Hilbert/Hilbert/Hilbert.vcxproj.filters
+/Hilbert/Hilbert/Debug/vc140.pdb
+/Hilbert/Hilbert/Debug/vc140.idb
+/Hilbert/Hilbert/Debug/Source.obj
+/Hilbert/Hilbert/Debug/Hilbert.tlog/link.write.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.tlog/link.read.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.tlog/link.command.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.tlog/Hilbert.lastbuildstate
+/Hilbert/Hilbert/Debug/Hilbert.tlog/CL.write.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.tlog/CL.read.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.tlog/CL.command.1.tlog
+/Hilbert/Hilbert/Debug/Hilbert.log
+/Hilbert/Debug/Hilbert.pdb
+/Hilbert/Debug/Hilbert.ilk
+/Hilbert/Debug/Hilbert.exe
+/Hilbert/.vs/Hilbert/v14/.suo
+
+# fixxy?
+*.opendb

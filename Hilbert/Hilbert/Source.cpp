@@ -8,7 +8,7 @@
 
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 1024;
-const int SCREEN_FPS = 60;
+const int SCREEN_FPS = 144;
 
 //global window and renderer
 SDL_Window* gWindow = NULL;
@@ -24,12 +24,12 @@ public:
 	void rotateCW();
 	void rotateCCW();
 
-	Complex operator+(const Complex &c)
+	Complex operator+(const Complex &c) const
 	{
 		Complex sum{ this->x + c.x, this->y + c.y };
 		return sum;
 	}
-	Complex operator-(const Complex &c)
+	Complex operator-(const Complex &c) const
 	{
 		Complex sum{ this->x - c.x, this->y - c.y };
 		return sum;
@@ -40,7 +40,7 @@ public:
 		this->y += c.y;
 		return *this;
 	}
-	Complex operator*(int n)
+	Complex operator*(int n) const
 	{
 		Complex product{ this->x * n, this->y * n };
 		return product;
@@ -65,34 +65,24 @@ void Complex::rotateCCW()
 
 std::vector<Complex> fullSeq;
 
-class Sequence
+struct Sequence
 {
-public:
 	Complex c1;
 	Complex c2;
 	Complex c3;
 	Complex c4;
 
-	Sequence(Complex _c1, Complex _c2, Complex _c3, Complex _c4);
-	Sequence flipNE();
-	Sequence flipNW();
+	Sequence flipNE() const;
+	Sequence flipNW() const;
 };
 
-Sequence::Sequence(Complex _c1, Complex _c2, Complex _c3, Complex _c4)
-{
-	c1 = _c1;
-	c2 = _c2;
-	c3 = _c3;
-	c4 = _c4;
-}
-
-Sequence Sequence::flipNE()
+Sequence Sequence::flipNE() const
 {
 	Sequence res{ c1, c4, c3, c2 };
 	return res;
 }
 
-Sequence Sequence::flipNW()
+Sequence Sequence::flipNW() const
 {
 	Sequence res{ c3, c2, c1, c4 };
 	return res;
@@ -157,7 +147,8 @@ void close()
 	SDL_Quit();
 }
 
-void sequentize(Sequence seq, Complex pos, unsigned iter)
+//populate fullSeq iteratively
+void sequentize(const Sequence &seq, Complex pos, unsigned iter)
 {
 	if (iter == 0)
 	{
@@ -168,12 +159,13 @@ void sequentize(Sequence seq, Complex pos, unsigned iter)
 	}
 	else
 	{
-		int multi = 2 << (iter - 1);
+		iter--;
+		int multi = 2 << iter; //distance multiplier, power of two
 
-		sequentize(seq.flipNE(), pos + seq.c1 * multi, iter - 1);
-		sequentize(seq, pos + seq.c2 * multi, iter - 1);
-		sequentize(seq, pos + seq.c3 * multi, iter - 1);
-		sequentize(seq.flipNW(), pos + seq.c4 * multi, iter - 1);
+		sequentize(seq.flipNE(), pos + seq.c1 * multi, iter);
+		sequentize(seq, pos + seq.c2 * multi, iter);
+		sequentize(seq, pos + seq.c3 * multi, iter);
+		sequentize(seq.flipNW(), pos + seq.c4 * multi, iter);
 
 	}
 }
@@ -205,7 +197,7 @@ int main()
 	SDL_RenderClear(gRenderer);
 
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
-	for (unsigned i = 0; i < fullSeq.size(); i++)
+	/*for (unsigned i = 0; i < fullSeq.size(); i++)
 	{
 		if (i > 0)
 		{
@@ -220,10 +212,15 @@ int main()
 
 		//pixels[(fullSeq[i].y* windowSurf->w) + fullSeq[i].x] = 0xffffffff;
 		//std::cout << fullSeq[i].x << ", " << fullSeq[i].y << std::endl;
-	}
+	}*/
 	//SDL_RenderDrawLines(gRenderer, fullSeq, fullSeq.size());
 
+	//Clear screen
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderClear(gRenderer);
+	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
+	unsigned i = 0;
 	while (!quit)
 	{
 		//Handle events on queue
@@ -236,8 +233,24 @@ int main()
 			}
 		}
 
+		
+
+		if (i > 0)
+		{
+			SDL_RenderDrawLine(
+				gRenderer,
+				fullSeq[i - 1].x*scale + offsetX,
+				fullSeq[i - 1].y*scale + offsetY,
+				fullSeq[i].x*scale + offsetX,
+				fullSeq[i].y*scale + offsetY
+			);
+		}
+
 		//Update screen
 		SDL_RenderPresent(gRenderer);
+
+		i++;
+		if (i >= fullSeq.size()) i = 0;
 	}
 
 	close();
