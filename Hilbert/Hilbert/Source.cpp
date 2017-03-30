@@ -6,8 +6,8 @@
 
 #undef main
 
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 1024;
+const int SCREEN_WIDTH = 256;
+const int SCREEN_HEIGHT = 256;
 const int SCREEN_FPS = 144;
 
 //global window and renderer
@@ -190,7 +190,7 @@ int main()
 	int offsetX = 1;
 	int offsetY = 1;
 
-	sequentize(seq, position, 7);
+	sequentize(seq, position, 4);
 
 	//Clear screen
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
@@ -220,7 +220,9 @@ int main()
 	SDL_RenderClear(gRenderer);
 	SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
 
+	int size = 256;
 	unsigned i = 0;
+	bool erase = true;
 	while (!quit)
 	{
 		//Handle events on queue
@@ -244,13 +246,39 @@ int main()
 				fullSeq[i].x*scale + offsetX,
 				fullSeq[i].y*scale + offsetY
 			);
+			SDL_RenderDrawLine(
+				gRenderer,
+				size - fullSeq[i - 1].x*scale - offsetX*2,
+				fullSeq[i - 1].y*scale + offsetY,
+				size - fullSeq[i].x*scale - offsetX*2,
+				fullSeq[i].y*scale + offsetY
+			);
+			SDL_RenderDrawLine(
+				gRenderer,
+				fullSeq[i - 1].x*scale + offsetX,
+				size - fullSeq[i - 1].y*scale - offsetY*2,
+				fullSeq[i].x*scale + offsetX,
+				size - fullSeq[i].y*scale - offsetY*2
+			);
+			SDL_RenderDrawLine(
+				gRenderer,
+				size - fullSeq[i - 1].x*scale - offsetX*2,
+				size - fullSeq[i - 1].y*scale - offsetY*2,
+				size - fullSeq[i].x*scale - offsetX*2,
+				size - fullSeq[i].y*scale - offsetY*2
+			);
 		}
 
 		//Update screen
 		SDL_RenderPresent(gRenderer);
 
 		i++;
-		if (i >= fullSeq.size()) i = 0;
+		if (i >= fullSeq.size()) 
+		{
+			i = 0; 
+			if (erase) { SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255); erase = false; }
+			else { SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255); erase = true; }
+		}
 	}
 
 	close();
